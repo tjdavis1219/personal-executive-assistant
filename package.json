@@ -1,0 +1,21 @@
+{
+  "name": "personal-executive-assistant",
+  "version": "1.0.0",
+  "description": "Personal executive assistant with Sunday check-in and accountability",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/scheduler.js",
+    "sunday-checkin": "node scripts/sunday-checkin.js",
+    "evening-checkin": "node scripts/evening-checkin.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.16",
+    "twilio": "^5.3.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
