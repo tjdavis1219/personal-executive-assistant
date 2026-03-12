@@ -61,10 +61,25 @@ Railway may prompt for a port. This app doesn’t serve HTTP.
 
 The scheduler uses `node-cron` with timezone `America/New_York`, so daylight saving is handled automatically.
 
+## Two-way SMS (webhook)
+
+To reply to incoming texts, run the **webhook** server so Twilio can POST to it:
+
+1. **Add a second service** in the same Railway project: **New** → **GitHub Repo** → same repo.
+2. **Start command:** `npm run webhook` (or `node scripts/webhook.js`).
+3. **Variables:** Use the same env vars as the scheduler (at least `ANTHROPIC_API_KEY`, `TWILIO_*`). The webhook reads `context/goals.md` and `context/accountability.md`.
+4. **Public URL:** In the webhook service, open **Settings** → **Networking** → **Generate Domain**. You’ll get a URL like `https://your-app.up.railway.app`.
+5. **Twilio:** In [Twilio Console](https://console.twilio.com) → **Phone Numbers** → your number → **Messaging**. Under "A MESSAGE COMES IN" set:
+   - **Webhook:** `https://your-app.up.railway.app/sms`
+   - **HTTP:** POST  
+   Save. When someone texts your Twilio number, Twilio will POST to that URL; the app logs the message to `context/log.md`, gets a reply from Claude, and sends it back via SMS.
+
+**Local test:** Run `npm run webhook`, then use a tunnel (e.g. ngrok) and point Twilio at the tunnel URL (e.g. `https://abc.ngrok.io/sms`) for testing.
+
 ## Local vs Railway
 
-- **Locally:** Run `npm run sunday-checkin` or `npm run evening-checkin` when you want, or `npm start` to run the scheduler in the background.
-- **Railway:** Only `npm start` (scheduler) runs; it triggers the two scripts on the schedule above.
+- **Locally:** Run `npm run sunday-checkin` or `npm run evening-checkin` when you want, `npm start` for the scheduler, or `npm run webhook` for two-way SMS.
+- **Railway:** Run **two services**: one with `npm start` (scheduler), one with `npm run webhook` (public URL for Twilio).
 
 ## Troubleshooting
 
